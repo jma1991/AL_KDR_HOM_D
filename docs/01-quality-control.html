@@ -515,16 +515,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjma1991ALKDRHOMDtreef684c1321139880650a3d4db653a5268300e0dd3targetblankf684c13a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jma1991/AL_KDR_HOM_D/tree/f684c1321139880650a3d4db653a5268300e0dd3" target="_blank">f684c13</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjma1991ALKDRHOMDtreec7fd9e78a56e967c0ef43f8737be080c5e827f7etargetblankc7fd9e7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jma1991/AL_KDR_HOM_D/tree/c7fd9e78a56e967c0ef43f8737be080c5e827f7e" target="_blank">c7fd9e7</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomjma1991ALKDRHOMDtreef684c1321139880650a3d4db653a5268300e0dd3targetblankf684c13a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjma1991ALKDRHOMDtreec7fd9e78a56e967c0ef43f8737be080c5e827f7etargetblankc7fd9e7a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/jma1991/AL_KDR_HOM_D/tree/f684c1321139880650a3d4db653a5268300e0dd3" target="_blank">f684c13</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/jma1991/AL_KDR_HOM_D/tree/c7fd9e78a56e967c0ef43f8737be080c5e827f7e" target="_blank">c7fd9e7</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -534,10 +534,14 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/cache/
     Ignored:    code/.DS_Store
     Ignored:    data/backup/
     Ignored:    data/markers.csv
     Ignored:    data/salmon.rds
+    Ignored:    output/01-quality-control.rds
+    Ignored:    output/02-normalization.rds
+    Ignored:    output/03-feature-selection.rds
 
 Untracked files:
     Untracked:  .write-test-ce7b29f3-3b18-4930-b8c8-aa17f7000d05
@@ -551,11 +555,6 @@ Unstaged changes:
     Modified:   _workflowr.R
     Deleted:    _workflowr.sh
     Modified:   _workflowr.yml
-    Modified:   analysis/04-reduced-dimensions.Rmd
-    Modified:   analysis/05-clustering.Rmd
-    Modified:   analysis/06-doublet-detection.Rmd
-    Modified:   analysis/07-cell-cycle.Rmd
-    Modified:   analysis/09-cell-annotation.Rmd
     Deleted:    analysis/10-atlas-integration.Rmd
     Modified:   analysis/_site.yml
 
@@ -596,6 +595,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jma1991/AL_KDR_HOM_D/df425ee38c88e6c7a094af66b0501114c8afb547/docs/01-quality-control.html" target="_blank">df425ee</a>
+</td>
+<td>
+James Ashmore
+</td>
+<td>
+2021-07-21
+</td>
+<td>
+Build
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -685,7 +701,7 @@ library(robustbase)</code></pre>
 </div>
 <div id="exploration" class="section level2">
 <h2>Exploration</h2>
-<p>We begin by exploring the dataset which contains 96 cells and 55472 genes.</p>
+<p>We begin by exploring the dataset which contains cells and 55472 genes.</p>
 </div>
 <div id="metrics" class="section level2">
 <h2>Metrics</h2>
