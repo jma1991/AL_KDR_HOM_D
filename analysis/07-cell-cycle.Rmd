@@ -23,17 +23,17 @@ knitr::opts_chunk$set(
 )
 ```
 
-Attach required packages:
+Load Bioconductor packages:
 
 ```{r}
-library(SingleR)
+library(org.Mm.eg.db)
+library(scater)
 library(scran)
 library(scRNAseq)
-library(scater)
-library(org.Mm.eg.db)
+library(SingleR)
 ```
 
-Import experiment data:
+Read experiment data:
 
 ```{r}
 sce <- readRDS("output/06-doublet-detection.rds")

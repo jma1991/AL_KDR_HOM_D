@@ -19,6 +19,7 @@ Define chunk options:
 knitr::opts_chunk$set(
   autodep    = TRUE,
   cache      = TRUE,
+  cache.lazy = FALSE,
   cache.path = "cache/09-cell-annotation.Rmd/",
   dev        = "png",
   error      = FALSE,
@@ -29,16 +30,27 @@ knitr::opts_chunk$set(
 )
 ```
 
-Attach required packages:
+Load Bioconductor packages:
 
 ```{r}
-library(AUCell)
-library(SingleR)
-library(GSEABase)
 library(scran)
 library(scater)
+library(AUCell)
+library(GSEABase)
+library(SingleR)
+```
+
+Load CRAN packages:
+
+```{r}
 library(patchwork)
 library(pheatmap)
+```
+
+Source custom functions:
+
+```{r}
+source("code/cleanEmbryoAtlasData.R")
 ```
 
 Import experiment data:
@@ -54,7 +66,7 @@ sce <- readRDS("output/08-marker-detection.rds")
 Read gene sets from disk and check they are present in the data:
 
 ```{r}
-all <- read.csv("data/gene-sets.csv", stringsAsFactors = FALSE)
+all <- read.csv("data/markers.csv", stringsAsFactors = FALSE)
 
 all <- all[all$gene_id %in% rowData(sce)$gene_id, ]
 ```
@@ -117,55 +129,31 @@ plotScoreDistribution(dat, show = "delta.med", ncol = 3, show.nmads = 3)
 
 Load the mouse gastrulation data package:
 
-```{r cache = FALSE}
+```{r}
 library(MouseGastrulationData)
 ```
 
 Subset atlas sample metadata by embryonic stage:
 
-```{r cache = FALSE}
+```{r}
 AtlasSampleMetadata <- subset(AtlasSampleMetadata, stage == "E8.25")
 ```
 
 Retrieve processed samples from embryo atlas data:
 
-```{r cache = FALSE}
+```{r}
 ref <- EmbryoAtlasData(type = "processed", samples = AtlasSampleMetadata$sample)
 ```
 
-Compute log-normalized expression values:
+Clean processed samples from embryo atlas data:
 
-```{r cache = FALSE}
-ref <- logNormCounts(ref)
-```
-
-Remove cells without a celltype label:
-
-```{r cache = FALSE}
-use <- !is.na(ref$celltype)
-
-ref <- ref[, use]
-```
-
-Remove cells marked as stripped nuclei:
-
-```{r cache = FALSE}
-use <- !ref$stripped
-
-ref <- ref[, use]
-```
-
-Remove cells marked as doublets:
-
-```{r cache = FALSE}
-use <- !ref$doublet
-
-ref <- ref[, use]
+```{r}
+ref <- cleanEmbryoAtlasData(ref)
 ```
 
 Identify marker genes for each cell type whilst blocking on sample:
 
-```{r cache = FALSE}
+```{r}
 res <- pairwiseWilcox(logcounts(ref), groups = ref$celltype, block = ref$sample)
 
 sig <- getTopMarkers(res$statistics, res$pairs)
@@ -173,7 +161,7 @@ sig <- getTopMarkers(res$statistics, res$pairs)
 
 Aggregate references within each celltype and sample combination:
 
-```{r cache = FALSE}
+```{r}
 lab <- paste(ref$celltype, ref$sample, sep = "-")
 
 ref <- aggregateReference(ref, labels = lab)
@@ -181,13 +169,13 @@ ref <- aggregateReference(ref, labels = lab)
 
 Remove sample label from aggregated reference names:
 
-```{r cache = FALSE}
+```{r}
 lab <- sapply(strsplit(colnames(ref), "-"), '[', 1)
 ```
 
 Return the best annotation for each cell in the test dataset:
 
-```{r cache = FALSE}
+```{r}
 ids <- rownames(sce) # save original feature names
 
 rownames(sce) <- rowData(sce)$gene_id # make feature names compatible

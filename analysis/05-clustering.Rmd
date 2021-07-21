@@ -27,14 +27,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-Load required packages:
+Load Bioconductor packages:
+
+```{r}
+library(scater)
+library(scran)
+```
+
+Load CRAN packages:
 
 ```{r}
 library(cluster)
 library(igraph)
 library(pheatmap)
-library(scater)
-library(scran)
 ```
 
 Read experiment data:
@@ -50,6 +55,8 @@ sce <- readRDS("output/04-reduced-dimensions.rds")
 Perform clustering using rank-based weights followed by Walktrap clustering:
 
 ```{r}
+set.seed(0001101110)
+
 snn <- buildSNNGraph(sce, type = "rank", use.dimred = "PCA")
 
 cls <- cluster_walktrap(snn)$membership
@@ -110,6 +117,8 @@ patchwork::wrap_plots(plt)
 Perform clustering using Jaccard-based weights followed by Louvain clustering:
 
 ```{r}
+set.seed(0000111111)
+
 snn <- buildSNNGraph(sce, type = "jaccard", use.dimred = "PCA")
 
 cls <- cluster_louvain(snn)$membership
@@ -172,7 +181,7 @@ patchwork::wrap_plots(plt)
 Perform k-means clustering on the PCA matrix:
 
 ```{r}
-set.seed(125069998)
+set.seed(1111010111)
 
 dim <- reducedDim(sce, "PCA")
 
@@ -196,7 +205,7 @@ ggplot(dat, aes(var, val)) +
 Select optimal number of clusters:
 
 ```{r}
-set.seed(125069998)
+set.seed(1111010111)
 
 cls <- kmeans(dim, centers = num)
 
@@ -260,6 +269,8 @@ patchwork::wrap_plots(plt)
 Perform hierarchical cluster analysis on the PCA data:
 
 ```{r}
+set.seed(1010010111)
+
 dim <- reducedDim(sce, "PCA")
 
 dst <- dist(dim)

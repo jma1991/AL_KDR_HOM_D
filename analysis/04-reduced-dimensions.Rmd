@@ -27,14 +27,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-Load required packages:
+Load Bioconductor packages:
 
 ```{r}
 library(BiocSingular)
-library(patchwork)
-library(pheatmap)
 library(scater)
 library(scran)
+```
+
+Load CRAN packages:
+
+```{r}
+library(patchwork)
+library(pheatmap)
 ```
 
 Read experiment data:
@@ -50,7 +55,7 @@ sce <- readRDS("output/03-feature-selection.rds")
 Perform a principal components analysis (PCA) on the expression data:
 
 ```{r}
-set.seed(324158631)
+set.seed(1000100100)
 
 sce <- runPCA(sce, subset_row = rowData(sce)$selected, BSPARAM = ExactParam())
 ```
@@ -96,7 +101,7 @@ ggplot(dat, aes(index, total)) +
 Retain all PCs until the percentage of total variation explained reaches a given threshold based on the technical noise:
 
 ```{r}
-set.seed(879348777)
+set.seed(0000010110)
 
 dec <- metadata(sce)$modelGeneVarWithSpikes
 
@@ -151,7 +156,7 @@ ggplot(dat, aes(n.pcs, n.clusters)) +
 Choose number of PCs to retain from the above analyses:
 
 ```{r}
-num <- 8
+num <- 6
 
 len <- seq_len(num)
 
@@ -200,14 +205,14 @@ arg <- expand.grid(
 
 plt <- apply(arg, 1, function(x) {
 
-  set.seed(409484420)
+  set.seed(1101110100)
 
   run <- runTSNE(sce, dimred = "PCA", perplexity = x[1], max_iter = x[2])
 
   txt <- paste(x[1], x[2], sep = "/")
 
   plotTSNE(run, colour_by = "cluster") + ggtitle(txt) + 
-    theme(axis.title = element_blank(), legend.position = "none")
+    theme(aspect.ratio = 1, axis.title = element_blank(), legend.position = "none")
 
 })
 
@@ -219,9 +224,9 @@ wrap_plots(plt, nrow = 6, ncol = 6, byrow = FALSE)
 Select optimal perplexity value and number of iterations:
 
 ```{r}
-set.seed(409484420)
+set.seed(1101110100)
 
-sce <- runTSNE(sce, dimred = "PCA", perplexity = 18, max_iter = 500)
+sce <- runTSNE(sce, dimred = "PCA", perplexity = 23, max_iter = 1500)
 ```
 
 ## UMAP
@@ -246,14 +251,14 @@ arg <- expand.grid(
 
 plt <- apply(arg, 1, function(x) {
 
-  set.seed(457524408)
+  set.seed(0010011101)
 
   run <- runUMAP(sce, dimred = "PCA", n_neighbors = x[1], min_dist = x[2])
 
   txt <- paste(x[1], x[2], sep = "/")
 
   plotUMAP(run, colour_by = "cluster") + ggtitle(txt) + 
-    theme(axis.title = element_blank(), legend.position = "none")
+    theme(aspect.ratio = 1, axis.title = element_blank(), legend.position = "none")
 
 })
 
@@ -265,9 +270,9 @@ wrap_plots(plt, nrow = 6, ncol = 6, byrow = FALSE)
 Select optimal number of nearest neighbors:
 
 ```{r}
-set.seed(457524408)
+set.seed(0010011101)
 
-sce <- runUMAP(sce, dimred = "PCA", n_neighbors = 18, min_dist = 0.2)
+sce <- runUMAP(sce, dimred = "PCA", n_neighbors = 68, min_dist = 0.2)
 ```
 
 ## Variables {.tabset}

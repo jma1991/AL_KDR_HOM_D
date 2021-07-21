@@ -28,6 +28,7 @@ Load required packages:
 ```{r}
 library(scater)
 library(scran)
+library(scDblFinder)
 ```
 
 Read experiment data:
@@ -51,24 +52,44 @@ run <- ifelse(num < 3, FALSE, TRUE)
 Identify potential clusters of doublet cells based on intermediate expression profiles:
 
 ```{r eval = run}
-dbl <- doubletCluster(sce, sce$cluster)
+set.seed(0100001011)
+
+dbl <- findDoubletClusters(sce, sce$cluster)
 ```
 
 Annotate clusters that have unusually low number of unique genes:
 
 ```{r eval = run}
-out <- isOutlier(dbl$N + 1, type = "lower", log = TRUE) # add pseudocount for log transform
+out <- isOutlier(dbl$num.de, type = "lower", log = TRUE)
 
-id1 <- dbl$source1[out]
-
-id2 <- dbl$source2[out]
-
-ids <- union(id1, id2)
+ids <- rownames(dbl)[out]
 
 sce$doublet_cluster <- ifelse(sce$cluster %in% ids, TRUE, FALSE)
 ```
 
-Check for clusters that have unusually low number of unique genes:
+Inspect the distribution of doublet clusters on reduced dimensions:
+
+#### PCA
+
+```{r}
+plotPCA(sce, colour_by = "cluster", shape_by = "doublet_cluster")
+```
+
+#### TSNE
+
+```{r}
+plotTSNE(sce, colour_by = "cluster", shape_by = "doublet_cluster")
+```
+
+#### UMAP
+
+```{r}
+plotUMAP(sce, colour_by = "cluster", shape_by = "doublet_cluster")
+```
+
+### {.tabset}
+
+Check for any doublet clusters:
 
 ```{r eval = run}
 run <- any(sce$doublet_cluster)
@@ -87,17 +108,17 @@ sig <- Filter(nrow, sig)
 Inspect the expression of marker genes across clusters:
 
 ```{r eval = run, results = "asis"}
-for (n in names(sig)) {
+for (i in ids) {
   
-  dat <- sig[[n]]
+  dat <- sig[[i]]
   
   dat <- subset(dat, Top <= 10)
   
-  ids <- rownames(dat)
+  top <- rownames(dat)
   
-  cat("#### Cluster", n, "\n")
+  cat("#### Cluster", i, "\n")
 
-  plotHeatmap(sce, order_columns_by = "cluster", features = ids, center = TRUE, symmetric = TRUE)
+  plotHeatmap(sce, order_columns_by = "cluster", features = top, center = TRUE, symmetric = TRUE)
 
   cat("\n\n")
 
@@ -109,15 +130,15 @@ for (n in names(sig)) {
 Identify potential doublet cells based on simulations of putative doublet expression profiles:
 
 ```{r}
-set.seed(965416033)
+set.seed(1001110010)
 
-dim <- reducedDim(sce)
+hvg <- rowData(sce)$selected
 
-num <- ncol(dim)
+dim <- ncol(reducedDim(sce))
 
-dbl <- doubletCells(sce, d = num)
+dbl <- computeDoubletDensity(sce, subset.row = hvg, d = dim)
 
-sce$doublet_score <- log10(dbl + 1)
+sce$doublet_score <- dbl
 ```
 
 Inspect the distribution of doublet scores on reduced dimensions:
