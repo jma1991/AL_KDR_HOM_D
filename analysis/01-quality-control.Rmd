@@ -27,34 +27,32 @@ knitr::opts_chunk$set(
 )
 ```
 
-Load required packages:
+Load Bioconductor packages:
 
 ```{r}
-library(BiocSingular)
-library(SingleCellExperiment)
+library(scater)
+library(scran)
+library(scuttle)
+```
+
+Load CRAN packages:
+
+```{r}
 library(eulerr)
 library(patchwork)
 library(robustbase)
-library(scater)
-library(scran)
 ```
 
 Read experiment data:
 
 ```{r}
-sce <- readRDS("data/salmon-quant.rds")
+sce <- readRDS("data/salmon.rds")
 ```
 
 Make feature names unique:
 
 ```{r}
 rownames(sce) <- uniquifyFeatureNames(rowData(sce)$gene_id, rowData(sce)$gene_name)
-```
-
-Make sample names unique:
-
-```{r}
-colnames(sce) <- colData(sce)$sample
 ```
 
 ## Exploration
@@ -67,14 +65,14 @@ Identify mitochondrial and reporter genes:
 
 ```{r}
 mit <- which(seqnames(sce) == "MT")
+
+gfp <- which(seqnames(sce) == "EGFP")
 ```
 
 Compute QC metrics for each cell:
 
 ```{r}
-sce <- addPerCellQC(sce, subsets = list(MT = mit))
-
-dat <- as.data.frame(colData(sce))
+sce <- addPerCellQC(sce, subsets = list(MT = mit, EGFP = gfp))
 ```
 
 Inspect the distributions of QC metrics:
@@ -90,13 +88,13 @@ wrap_plots(
 
 ### Dimensionality reduction {.tabset}
 
-Calculate dimenionality reduction data:
+Calculate dimensionality reduction data:
 
 ```{r}
-set.seed(345564804)
+set.seed(0010000001)
 sce <- computeLibraryFactors(sce)
 sce <- logNormCounts(sce)
-sce <- runPCA(sce, BSPARAM = ExactParam())
+sce <- runPCA(sce, BSPARAM = BiocSingular::ExactParam())
 sce <- runTSNE(sce, dimred = "PCA")
 sce <- runUMAP(sce, dimred = "PCA")
 ```
@@ -151,8 +149,8 @@ The first approach to identifying low-quality cells is to apply manual threshold
 dat <- DataFrame(
   low_lib_size = sce$sum < 100000,
   low_n_features = sce$detected < 5000,
-  high_subsets_MT_percent = sce$subsets_MT_percent > 10,
-  high_altexps_ERCC_percent = sce$altexps_ERCC_percent > 10
+  high_subsets_MT_percent = sce$subsets_MT_percent > 5,
+  high_altexps_ERCC_percent = sce$altexps_ERCC_percent > 5
 )
 
 sce$manual_discard <- dat$low_lib_size | dat$low_n_features | dat$high_subsets_MT_percent | dat$high_altexps_ERCC_percent
@@ -212,7 +210,7 @@ patchwork::wrap_plots(
 The next approach is to identify cells that are outliers based on the median absolute deviation for the QC metrics:
 
 ```{r}
-dat <- quickPerCellQC(sce, percent_subsets = c("subsets_MT_percent", "altexps_ERCC_percent"))
+dat <- quickPerCellQC(colData(sce), sub.fields = c("subsets_MT_percent", "altexps_ERCC_percent"))
 
 sce$adaptive_discard <- dat$discard
 ```

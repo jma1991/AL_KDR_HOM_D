@@ -27,17 +27,22 @@ knitr::opts_chunk$set(
 )
 ```
 
-Load required packages:
+Load Bioconductor packages:
 
 ```{r}
 library(BiocSingular)
 library(org.Mm.eg.db)
-library(eulerr)
-library(pheatmap)
-library(scales)
 library(scater)
 library(scran)
 library(msigdbr)
+```
+
+Load CRAN packages:
+
+```{r}
+library(eulerr)
+library(pheatmap)
+library(scales)
 ```
 
 Read experiment data:
@@ -392,7 +397,7 @@ dec <- c("modelGeneVar", "modelGeneCV2", "modelGeneVarWithSpikes", "modelGeneCV2
 ```{r, fig.height = 11, fig.width = 10}
 plt <- lapply(dec, function(x) {
   
-  set.seed(135229741)
+  set.seed(1011101100)
   
   hvg <- metadata(sce)[[x]]$hvg
   
@@ -410,7 +415,7 @@ patchwork::wrap_plots(plt, ncol = 2)
 ```{r, fig.height = 11, fig.width = 10}
 plt <- lapply(dec, function(x) {
   
-  set.seed(77623641)
+  set.seed(0101100110)
   
   hvg <- metadata(sce)[[x]]$hvg
   
@@ -430,7 +435,7 @@ patchwork::wrap_plots(plt, ncol = 2)
 ```{r, fig.height = 11, fig.width = 10}
 plt <- lapply(dec, function(x) {
   
-  set.seed(18155227)
+  set.seed(0001010011)
   
   hvg <- metadata(sce)[[x]]$hvg
   
@@ -450,7 +455,7 @@ patchwork::wrap_plots(plt, ncol = 2)
 Select highly variable genes and store in row metadata:
 
 ```{r}
-dec <- metadata(sce)$modelGeneVarWithSpikes
+dec <- metadata(sce)$modelGeneVar
 
 dec <- subset(dec, hvg == TRUE)
 
